@@ -12,6 +12,17 @@
 # while(1==1):
 #     print (time.time())
 
+VALID_LENGTH_OF_ARGS = 4
+VALID_DIRECTION = 'rlupwxyz'
+
+import sys
+import os.path
+
+def check_input_args(args):
+    if (len(args)-1) != VALID_LENGTH_OF_ARGS):
+        print("the number of arguments is not valid")
+    if(args[4])
+
 
 
 def read_wordlist_file(filename):
@@ -38,18 +49,22 @@ for line in matrix_of_letters:
 print (list_of_words)
 directions = ['z']
 dictionary_of_words = {}
+
 def find_words_in_matrix (word_list, matrix, directions):
     make_dictionary_of_words()
-    tupple_of_pairs = dictionary_to_tupple(dictionary_of_words)
-    return tupple_of_pairs
+    list_of_tupples = dictionary_to_tupples(dictionary_of_words)
+    return list_of_tupples
+
+def dictionary_to_tupples (dictionary_of_words):
+    list_of_tupples = dictionary_of_words.items()
 
 
 def make_dictionary_of_words():
     for index_y in range(len(matrix_of_letters)):
         for index_x in range(len(matrix_of_letters[0])):
-            find_all_words_and_update(index_x,index_y)
+            check_for_all_words_and_update(index_x,index_y)
 
-def find_all_words_and_update(index_x,index_y):
+def check_for_all_words_and_update(index_x,index_y):
     for word in list_of_words:
         if matrix_of_letters[index_y][index_x] == word[0]:
             check_word_for_directions(word,index_x,index_y)
@@ -60,10 +75,10 @@ def check_word_for_directions(word,index_x,index_y):
         check_word_for_single_direction(word,index_x,index_y,dir_x,dir_y)
 
 def check_word_for_single_direction(word,index_x,index_y,dir_x,dir_y):
-        print(matrix_of_letters[index_y][index_x])
-        if (check_if_not_out_of_range(word,index_x,index_y,dir_x,dir_y)):
-            if(check_if_word_fits(word,index_x,index_y,dir_x,dir_y)):
-                update_word_in_dictionary(word)
+    print(matrix_of_letters[index_y][index_x])
+    if (check_if_not_out_of_range(word,index_x,index_y,dir_x,dir_y)):
+        if(check_if_word_fits(word,index_x,index_y,dir_x,dir_y)):
+            update_word_in_dictionary(word)
 
 def update_word_in_dictionary(word):
     if word in dictionary_of_words:
@@ -117,33 +132,42 @@ def translate_direction(direction):
     elif direction=='z':
         return 1,-1
 
+
+
+def write_output_file (results , output_filename):
+    output_file = open( output_filename , 'w')
+    output_file.writeline(results)
+    output_file.close()
+
+
+
 make_dictionary_of_words()
 print(dictionary_of_words)
-        #dictionary of words = {make dictionary of all words found}
-        #tupple ={turn dictionary into tupple}:
-        #return tupple
+#dictionary of words = {make dictionary of all words found}
+#tupple ={turn dictionary into tupple}:
+#return tupple
 
 #{make dictionary of all words found}
-        # #go over line
-            # go over letter
-                #{update for all words that fit that letter for all directions}
+# #go over line
+# go over letter
+#{update for all words that fit that letter for all directions}
 
 
 
 #{update for all words that fit that letter for all directions}:
-    #go over words
-        # if letter == word[0]:
-            #{find word and update for all given directions}
+#go over words
+# if letter == word[0]:
+#{find word and update for all given directions}
 
- #{find word and update for all given directions}:
+#{find word and update for all given directions}:
 
-        #for all directions
-            #{check and update for single direction}
+#for all directions
+#{check and update for single direction}
 
 #{check and update for single direction}:
-    #if({check if there is room}):
-    #     {check if word is found}:
-                # {update dictionary}
+#if({check if there is room}):
+#     {check if word is found}:
+# {update dictionary}
 
 
 #{check if there is room}:
@@ -156,20 +180,20 @@ print(dictionary_of_words)
 
 
 #def write_output_file(results, output_filename):
-    # {make a text file with python code if needed, empty it if exists}:
+# {make a text file with python code if needed, empty it if exists}:
 
 
-    # {open it, write tupple into file when each pair is in a seperate line}:
+# {open it, write tupple into file when each pair is in a seperate line}:
 
 # {make a text file with python code if needed, empty it if exists}:
-    #if (filename exists):
-        #empty it
-    #else:
-        #create filname.txt
+#if (filename exists):
+#empty it
+#else:
+#create filname.txt
 
 # {open it, write tupple into file when each pair is in a seperate line, close it}:
-        #open file
-        # for every pair:
-            #write the pair
-            #go down one line
-        #close file
+#open file
+# for every pair:
+#write the pair
+#go down one line
+#close file
