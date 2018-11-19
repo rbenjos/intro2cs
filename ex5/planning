@@ -1,0 +1,89 @@
+
+
+# import sys
+# import time
+#
+# word_matrix = []
+# with open('matrix_file.txt') as initial_matrix:
+#     for line in initial_matrix:
+#         word_matrix.append(line.strip().split(','))
+#
+#
+# print(word_matrix)
+#
+# while(1==1):
+#     print (time.time())
+
+
+
+###################################
+
+
+#dictionary of words = {make dictionary of all words found}
+#tupple ={turn dictionary into tupple}:
+#return tupple
+
+#{make dictionary of all words found}
+# #go over line
+# go over letter
+#{update for all words that fit that letter for all directions}
+
+
+
+#{update for all words that fit that letter for all directions}:
+#go over words
+# if letter == word[0]:
+#{find word and update for all given directions}
+
+#{find word and update for all given directions}:
+
+#for all directions
+#{check and update for single direction}
+import sys
+# import time
+#
+# word_matrix = []
+# with open('matrix_file.txt') as initial_matrix:
+#     for line in initial_matrix:
+#         word_matrix.append(line.strip().split(','))
+#
+#
+# print(word_matrix)
+#
+# while(1==1):
+#     print (time.time())
+
+
+#{check and update for single direction}:
+#if({check if there is room}):
+#     {check if word is found}:
+# {update dictionary}
+
+
+#{check if there is room}:
+
+#{check if word is found}:
+
+# {update dictionary}
+
+#}}
+
+
+#def write_output_file(results, output_filename):
+# {make a text file with python code if needed, empty it if exists}:
+
+
+# {open it, write tupple into file when each pair is in a seperate line}:
+
+# {make a text file with python code if needed, empty it if exists}:
+#if (filename exists):
+#empty it
+#else:
+#create filname.txt
+
+# {open it, write tupple into file when each pair is in a seperate line, close it}:
+#open file
+# for every pair:
+#write the pair
+#go down one line
+#close file
