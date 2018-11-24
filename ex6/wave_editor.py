@@ -1,10 +1,19 @@
 import scipy as sp
 import numpy as np
-from wave_helper import *
 
+from wave_helper import *
+import math
+import os.path
 
 MAX_VOL = 32767
 MIN_VOL = -32768
+PI = math.pi
+INVALID_TEXT_MSG = 'Text is not a valid melody'
+INVALID_PATH_MSG = 'The file does not exist'
+VALID_TEXT = {'A','B','C','D','E','F','G','Q'}
+seinfeld = load_wave('seinfeld.wav')
+
+batman = load_wave('batman_theme_x.wav')
 
 
 
@@ -26,16 +35,16 @@ def slow_wave(wave):
     slow_wave = [wave[0],[]]
     for index in range (len(wave[1])-1):
         slow_wave[1].append(wave[1][index])
-        avg_tup = avg_of_tups(wave[1][index],wave[1][index+1])
+        avg_tup = avg_of_2_tups(wave[1][index], wave[1][index + 1])
         slow_wave[1].append(avg_tup)
     slow_wave[1].append(wave[1][len(wave[1])-1])
     return slow_wave
 
 
-def avg_of_tups (tup1,tup2):
+def avg_of_2_tups (tup1, tup2):
     avg_tup = []
-    avg_tup.append((tup1[0]+tup2[0])/2)
-    avg_tup.append((tup1[1]+tup2[1])/2)
+    avg_tup.append(int((tup1[0]+tup2[0])/2))
+    avg_tup.append(int((tup1[1]+tup2[1])/2))
     return avg_tup
 
 
@@ -65,7 +74,6 @@ def amplify_tup(tup):
     amp_tup.append(amp_tup1)
     amp_tup.append(amp_tup2)
     return amp_tup
-
 
 
 def dec_vol (wave):
@@ -110,3 +118,219 @@ def avg_of_3_tups (tup1,tup2,tup3):
     return avg_tup
 
 
+def norm_fr_rate (wave1,wave2):
+    if (wave1[0]>wave2[0]):
+        norm_wave1 = build_norm_wave(wave1, wave2)
+        norm_wave2 = wave2
+    elif (wave2[0]>wave1[0]):
+        norm_wave2 = build_norm_wave(wave2, wave1)
+        norm_wave1 = wave1
+    else:
+        norm_wave1 = wave1
+        norm_wave2 = wave2
+    return norm_wave1,norm_wave2
+
+
+def build_norm_wave (big_wave, small_wave):
+    normalized_wave = [small_wave[0],[]]
+    gcd = math.gcd(big_wave[0],small_wave[0])
+    big_gcd_ratio = int(big_wave[0]/gcd)
+    small_gcd_ratio = int(small_wave[0]/gcd)
+    for index1 in range(0,len(big_wave[1]),big_gcd_ratio):
+        for index2 in range(small_gcd_ratio):
+            if (index1+index2) > len(big_wave[1])-1:
+                break
+            else:
+                normalized_wave[1].append(big_wave[1][index1+index2])
+    return normalized_wave
+
+
+def unite_waves (wave1, wave2):
+    norm_wav1,norm_wav2 = norm_fr_rate(wave1,wave2)
+    if len(norm_wav1[1])>=len(norm_wav2[1]):
+        uni_wave = uni_norm_waves(norm_wav1, norm_wav2)
+    else:
+        uni_wave = uni_norm_waves(norm_wav2,norm_wav1)
+    return uni_wave
+
+
+def uni_norm_waves(big_wave, small_wave):
+    uni_wave = [big_wave[0],[]]
+    for index1 in range(len(small_wave[1])):
+        avg_tup = avg_of_2_tups(big_wave[1][index1], small_wave[1][index1])
+        uni_wave[1].append(avg_tup)
+    for index2 in range(len(small_wave[1]), len(big_wave[1])):
+        uni_wave[1].append(big_wave[1][index2])
+    return uni_wave
+
+def build_melody(note_list):
+    list_of_melody = []
+    for i in range(0,len(note_list),2):
+        if (note_list[i] == 'Q'):
+            current_note = build_empty(int(note_list[i+1]))
+        else:
+            current_note = build_note(note_list[i],int(note_list[i+1]))
+        list_of_melody += current_note
+    return list_of_melody
+
+
+def build_note (note,length):
+    freq_of_note = note_to_freq(note)
+    spc = (2000/freq_of_note)
+
+    note_list = []
+    for i in range (int(length*(2000/16))):
+        note_list.append([sample_i(i,spc), sample_i(i,spc)])
+    return note_list
+
+def build_empty(length):
+    empty_note = []
+    for i in range(int(length*(2000/16))):
+        empty_note.append([0,0])
+    return empty_note
+
+def sample_i(i,spc):
+    return int(MAX_VOL*math.sin((2*PI)*(i/spc)))
+
+def note_to_freq(note):
+    if note == 'A':
+        return 440
+    elif note == 'B':
+        return 494
+    elif note == 'C':
+        return 523
+    elif note == 'D':
+        return 587
+    elif note == 'E':
+        return 659
+    elif note == 'F':
+        return 698
+    elif note == 'G':
+        return 784
+
+
+def read_melody (filepath):
+    if os.path.isfile(filepath):
+        melody_file = open(filepath, 'r')
+        text_in_file = list(melody_file.read())
+        clean_melody_list = []
+        for i in range (len(text_in_file)):
+            if text_in_file[i] != ' ' and text_in_file[i] != '\n':
+                clean_melody_list.append(text_in_file[i])
+        return clean_melody_list
+    else:
+        return INVALID_PATH_MSG
+
+
+def check_invalid_text(melody_text):
+    for i in range(len(melody_text), 2):
+        if melody_text(i) not in VALID_TEXT:
+            return False
+        elif type(melody_text(i + 1)) != 'int':
+            return False
+
+
+def main():
+    print ("welcome to the best song editor in the aquarium")
+    user_input = 0
+    while user_input!= '4':
+
+        print("insert '1' to edit an existing file")
+        print("insert '2' to combine two files")
+        print("insert '3' to compose your own song")
+        print("insert '4' to exit the editor")
+
+        user_input = input()
+        if user_input == '1':
+            main_edit()
+        elif user_input =='2':
+            main_combine()
+        elif user_input == '3':
+            main_compose()
+        elif user_input == '4':
+            print('goodbye!')
+        else:
+            print('not a valid input! restart the editor')
+
+
+def main_edit():
+    file_path = ''
+    while os.path.isfile(file_path) is False:
+        print('Enter the file path:')
+        file_path = input()
+        if os.path.isfile(file_path):
+            break
+    user_file = load_wave(file_path)
+    new_wave = change_existing_file(user_file)
+
+    save_menu(new_wave) #?!!#!@$#$
+
+
+
+def change_existing_file(user_file):
+
+    user_input = 0
+    while int(user_input) not in range(1, 7):
+        print('What would you like to do with your file?')
+        print('1 - Reverse my song')
+        print('2 - Accelerate my song')
+        print('3 - Slow down my song')
+        print('4 - increase the volume')
+        print('5 - decrease the volume')
+        print('6 - Run a low pass filter on my song')
+        user_input = input()
+        if int(user_input) not in range (1,7):
+            print ('Please enter a valid input')
+
+    if user_input == '1':
+        new_wave = reverse_wave(user_file)
+    elif user_input == '2':
+        new_wave = accelerate_wave(user_file)
+    elif user_input == '3':
+        new_wave = slow_wave(user_file)
+    elif user_input == '4':
+        new_wave = inc_vol(user_file)
+    elif user_input == '5':
+        new_wave = dec_vol(user_file)
+    elif user_input == '6':
+        new_wave = muf_sound(user_input)
+    return new_wave
+
+
+def save_menu(wave):
+    user_input = 0
+    while int(user_input) not in range(1,3):
+        print('1 - Save the file')
+        print('2 - Change the new file')
+        user_input = input()
+        if int(user_input) not in range(1,3):
+            print('Please enter a valid input')
+
+    if user_input == '1':
+        file_name = input('Save as:')
+        save_wave(wave[0], wave[1], file_name)
+    elif user_input == '2':
+        change_existing_file(wave)
+
+
+def main_combine():
+    is_file1 = False
+    is_file2 = False
+    while is_file1 is False and is_file2 is False:
+        user_input = input('Enter your files path is the fillowing format: \n <file1_path><file2_path ')
+        user_input = user_input.strip('<')
+        user_input = user_input.strip('>')
+        user_input_lst = user_input.split('><')
+        is_file1 = os.path.isfile(user_input_lst[0])
+        is_file2 = os.path.isfile(user_input_lst[1])
+        if is_file1 is False:
+            print('File 1 does not exist')
+        elif is_file2 is False:
+            print('File 2 does not exist')
+        elif is_file1 is False and is_file2 is False:
+            print('Both files does not exist')
+
+    new_wave = unite_waves()
+
+
+change_existing_file(seinfeld)

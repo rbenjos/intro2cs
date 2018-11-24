@@ -1,5 +1,6 @@
 import scipy as sp
 import numpy as np
+
 from wave_helper import *
 import math
 
@@ -50,8 +51,8 @@ def slow_wave(wave):
 
 def avg_of_2_tups (tup1, tup2):
     avg_tup = []
-    avg_tup.append((tup1[0]+tup2[0])/2)
-    avg_tup.append((tup1[1]+tup2[1])/2)
+    avg_tup.append(int((tup1[0]+tup2[0])/2))
+    avg_tup.append(int((tup1[1]+tup2[1])/2))
     return avg_tup
 
 
@@ -125,25 +126,72 @@ def avg_of_3_tups (tup1,tup2,tup3):
 
 def norm_fr_rate (wave1,wave2):
     if (wave1[0]>wave2[0]):
-        norm_wave1 = build_norm_list(a,b,c)
+        norm_wave1 = build_norm_wave(wave1, wave2)
+        norm_wave2 = wave2
     elif (wave2[0]>wave1[0]):
-        #normalize wave 2
+        norm_wave2 = build_norm_wave(wave2, wave1)
+        norm_wave1 = wave1
     else:
         norm_wave1 = wave1
-        norm_wave2=wave 2
+        norm_wave2 = wave2
     return norm_wave1,norm_wave2
 
-def build_norm_list (wave,):
+def build_norm_wave (big_wave, small_wave):
+    normalized_wave = [small_wave[0],[]]
+    gcd = math.gcd(big_wave[0],small_wave[0])
+    big_gcd_ratio = int(big_wave[0]/gcd)
+    small_gcd_ratio = int(small_wave[0]/gcd)
+    for index1 in range(0,len(big_wave[1]),big_gcd_ratio):
+        for index2 in range(small_gcd_ratio):
+            if (index1+index2) > len(big_wave[1])-1:
+                break
+            else:
+                normalized_wave[1].append(big_wave[1][index1+index2])
+    return normalized_wave
 
 
-math.gcd()
-muf_seinfeld = muf_sound(seinfeld)
+def unite_waves (wave1, wave2):
+    norm_wav1,norm_wav2 = norm_fr_rate(wave1,wave2)
+    if len(norm_wav1[1])>=len(norm_wav2[1]):
+        uni_wave = uni_norm_waves(norm_wav1, norm_wav2)
+    else:
+        uni_wave = uni_norm_waves(norm_wav2,norm_wav1)
+    return uni_wave
 
-print(len(muf_seinfeld[1]),len(seinfeld[1]))
-print (muf_seinfeld[1])
-print(seinfeld[1])
+def uni_norm_waves(big_wave, small_wave):
+    uni_wave = [big_wave[0],[]]
+    for index1 in range(len(small_wave[1])):
+        avg_tup = avg_of_2_tups(big_wave[1][index1], small_wave[1][index1])
+        uni_wave[1].append(avg_tup)
+    for index2 in range(len(small_wave[1]), len(big_wave[1])):
+        uni_wave[1].append(big_wave[1][index2])
+    return uni_wave
 
-save_wave(muf_seinfeld[0],muf_seinfeld[1],'muffeled_seinfeld')
+#
+#
+# list_of_tups1 = [2,[[20,20],[40,40],[60,60],[80,80],[100,100]]]
+# list_of_tups2 = [3,[[1,1],[3,3],[5,5],[7,7],[9,9],[11,11],[13,13],[15,15],[17,17],[19,19]]]
+
+list_of_tups3 =[5500,[[10,10],[20,20],[30,30],[40,40],[50,50],[60,60],[70,70],[80,80],[90,90],[100,100]]]
+list_of_tups4 = [2200,[[0,0],[0,0],[0,0],[0,0]]]
+
+
+
+rev_sein = reverse_wave(seinfeld)
+uni_sein_rev = unite_waves(seinfeld,rev_sein)
+
+save_wave(uni_sein_rev[0],uni_sein_rev[1],'uni_sein_rev')
+
+
+#
+# math.gcd()
+# muf_seinfeld = muf_sound(seinfeld)
+#
+# print(len(muf_seinfeld[1]),len(seinfeld[1]))
+# print (muf_seinfeld[1])
+# print(seinfeld[1])
+#
+# save_wave(muf_seinfeld[0],muf_seinfeld[1],'muffeled_seinfeld')
 
 # tup1= (10,10)
 # tup2= (20,20)
