@@ -1,0 +1,21 @@
+yuvalpadan
+313580912
+Yuval Padan
+
+=========================
+=  README for ex8: OOP  =
+=========================
+
+============================================================================
+ This exercise implements a version of the 'rush hour' game.
+ The game consists of a two-dimensional board on which a red car and other
+ cars are located, and the aim of the game is to "rescue" the red car from
+ the traffic jam and pass it through the exit.
+============================================================================
+
+Files included in this exercise:
+    1. car - a class representing a car
+    2. board - a class representing the board game
+    3. game - a class represnting the "rush hour" game
+
+ Full details of all the functions are in the exercise files.
